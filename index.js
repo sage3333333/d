@@ -1,5 +1,3 @@
-
- 
  //sizing variables
  var w = window.innerWidth,
  h = window.innerHeight,
@@ -10,25 +8,28 @@
  sizeW = h * dimDif;
 
 
-let font
-let fontSize = 350
-let alphabet = "O"
-let graphic
-let sliderIndex = 2
 
-let colSlider
-let rowSlider
-let sliderX
-let sliderY
+
+
+let font, alphabet = "O", 
+    graphic, sliderIndex = 3
+
+let colSlider, rowSlider, 
+    sliderX, sliderY, fontSizeSlider
+
+let switchOn = false,
+    bttnSize = 50, 
+    bkgdCol = 0, circleCol = 255
+let tt = 'Hi.\nThis is a web-based experimental text editor that allows you to \nadjust letters and create \nunique characters.  \n\nPress any key to change \nPress enter/return to save as png'
 
 function preload(){
  font = loadFont('Monoton-Regular.ttf')
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(windowWidth, windowHeight)
   sssX = 30
-  sssY = 25
+  sssY = 28
 
   colSlider = createSlider(10, 100, 50, 1);
   colSlider.position(sssX, sssY*sliderIndex+1);
@@ -40,40 +41,35 @@ function setup() {
   rowSlider.style('width', '80px');
   sliderIndex=sliderIndex+1
   
-  sliderX = createSlider(-100, 100, 10, 1);
+  sliderX = createSlider(-100, 100, 10, 1)
   sliderX.position(sssX, sssY*sliderIndex+1)
-  sliderX.style('width', '80px');
+  sliderX.style('width', '80px')
   sliderIndex=sliderIndex+1
   
-  sliderY = createSlider(5, 200, 10, 1);
+  sliderY = createSlider(5, 200, 10, 1)
   sliderY.position(sssX, sssY*sliderIndex+1)
   sliderY.style('width', '80px');
   colSlider.addClass("mySliderStyle")
   sliderIndex=sliderIndex+1
   
-  // Background Color
-  colorPicker = createColorPicker('#000');
-  colorPicker.position(sssX, sssY*sliderIndex+20);
-  colorPicker.style('width', '80px');
+  fontSizeSlider = createSlider(150, 670, 350, 1);
+  fontSizeSlider.position(sssX, sssY*sliderIndex+1);
+  fontSizeSlider.style('width', '80px');
   sliderIndex=sliderIndex+1
 }
 
 function draw() {
-  background(colorPicker.color());
-  fill(255)
-  textAlign(LEFT, TOP)
-  text('row', 120,50)  
-  text('column', 120,75)
-  text('x', 120,100)
-  text('y', 120,125)
+  background(bkgdCol);
   
   rows = rowSlider.value()
   cols = colSlider.value()
   slX = sliderX.value()
   slY = sliderY.value()
+  fontSize = fontSizeSlider.value()
 
   //graphic
   graphic = createGraphics(windowWidth, windowHeight)
+  graphic.background(bkgdCol);
   graphic.textFont(font)
   graphic.textAlign(CENTER, CENTER)
   graphic.textSize(fontSize)
@@ -86,7 +82,7 @@ function draw() {
   graphic.fill(112,128,144)
   graphic.text(alphabet, width/2 - 2, height/2 - 2)
   // white
-  graphic.fill(255, 255, 255)
+  graphic.fill(circleCol)
   graphic.text(alphabet, width/2, height/2)
   
   for (let x = 0; x < width / rows ; x += 1){
@@ -104,8 +100,61 @@ function draw() {
       let sw = rows
       let sh = cols
       
-    image(graphic, dx, dy, dw, dh, sx, sy, sw, sh)
+    image(graphic, dx, dy, dw, dh, sx, sy+80, sw, sh)
     }
+  }
+  
+  push()
+  textSize(28)
+  textAlign(LEFT)
+  textStyle(ITALIC)
+  text('BANDS, BLACK AND WHITE',30,70)  
+  pop()
+
+  push()
+  textSize(13)
+  textStyle(NORMAL)
+  textAlign(LEFT, TOP)
+  sstX = 120
+  text('row', sstX, 85)  
+  text('column', sstX, 113)
+  text('x', sstX, 140 )
+  text('y', sstX, 168)
+  text('size', sstX, 197)  
+  pop()
+
+  //switch
+  if (switchOn) {
+    bkgdCol = color(255)
+    circleCol = color(0)
+    fill(0)
+    noStroke()
+  } else {
+    bkgdCol = 0
+    circleCol = color(255)
+    noStroke()
+    fill(255)
+  }
+  circle(windowWidth-70, 75, bttnSize)  
+  
+    if ((mouseX > windowWidth-80) && (mouseX < windowWidth-55) &&
+    (mouseY > 115) && (mouseY < 140)) {
+    textStyle(NORMAL)
+    textSize(13)
+    textAlign(RIGHT)
+    text(tt,windowWidth-240,120,150,160)  
+  } else {
+    textStyle(NORMAL)
+    textSize(24)
+    textAlign(LEFT)
+    text('ⓘ',windowWidth-80,132)  
+  }
+}
+
+function mouseClicked() {
+  let distance = dist(mouseX, mouseY, windowWidth-70, 75);
+  if (distance <= bttnSize / 2) {
+    switchOn = !switchOn;
   }
 }
 function keyTyped() {
@@ -161,8 +210,11 @@ function keyTyped() {
     alphabet = "Y"
   }else if (key === 'z') {
     alphabet = "Z"
-  }
-}
+}}
+function keyPressed() {
+if (keyCode === ENTER) {
+    save(graphic, "drawing#.png")
+  }}
 function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
-  }
+  resizeCanvas(windowWidth, windowHeight);
+}
